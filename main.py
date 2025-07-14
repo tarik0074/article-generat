@@ -7,18 +7,12 @@ app = Flask(__name__)
 
 # --- CONFIGURATION ---
 
-# Clé API OpenAI 
 openai.api_key = "OPENAI_API_KEY"
 
-# Infos WordPress
 WORDPRESS_URL = "https://jebricol.com/wp-login.php?hide_my_wp=bricolage"
 USERNAME = "Bricoleur"
 APP_PASSWORD = "Mgbk JrPy JD1H PIIR gFai 2cD1"
-
-# ID de la catégorie dans laquelle tu veux publier (optionnel)
 CATEGORIE_ID = 5
-
-# --- FONCTION POUR GENERER L'ARTICLE AVEC OPENAI ---
 
 def generer_article():
     prompt = (
@@ -33,8 +27,6 @@ def generer_article():
     )
     texte = response.choices[0].text.strip()
     return texte
-
-# --- FONCTION POUR PUBLIER L'ARTICLE SUR WORDPRESS ---
 
 def publier_article(titre, contenu, categorie_id=None):
     data = {
@@ -53,7 +45,9 @@ def publier_article(titre, contenu, categorie_id=None):
     else:
         return {"success": False, "error": response.text, "status_code": response.status_code}
 
-# --- ROUTE FLASK POUR LANCER LA GENERATION ET PUBLICATION ---
+@app.route('/')
+def home():
+    return "Bienvenue sur mon générateur d'articles !"
 
 @app.route('/generer-et-publier')
 def generer_et_publier():
@@ -70,9 +64,7 @@ def generer_et_publier():
     except Exception as e:
         return jsonify({"message": "Erreur serveur", "details": str(e)}), 500
 
-# --- Lancer le serveur Flask ---
 import os
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))  
+    port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
-
