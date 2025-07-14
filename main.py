@@ -71,7 +71,7 @@ def generer_et_publier():
         return jsonify({"message": "Erreur serveur", "details": str(e)}), 500
 
 # --- Lancer le serveur Flask ---
-
+import os
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))  
     app.run(host="0.0.0.0", port=port)
