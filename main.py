@@ -5,8 +5,6 @@ from requests.auth import HTTPBasicAuth
 
 app = Flask(__name__)
 
-# --- CONFIGURATION ---
-
 openai.api_key = "OPENAI_API_KEY"
 
 WORDPRESS_URL = "https://jebricol.com/wp-login.php?hide_my_wp=bricolage"
