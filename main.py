@@ -7,12 +7,12 @@ app = Flask(__name__)
 
 # --- CONFIGURATION ---
 
-# Clé API OpenAI (mets la tienne)
+# Clé API OpenAI 
 openai.api_key = "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
 "
 
 # Infos WordPress
-WORDPRESS_URL = "https://jebricol.com/wp-json/wp/v2/posts"
+WORDPRESS_URL = "https://jebricol.com/wp-login.php?hide_my_wp=bricolage"
 USERNAME = "Bricoleur"
 APP_PASSWORD = "Mgbk JrPy JD1H PIIR gFai 2cD1"
 
