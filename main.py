@@ -2,31 +2,42 @@ from flask import Flask, jsonify
 import openai
 import requests
 from requests.auth import HTTPBasicAuth
+import os
 
 app = Flask(__name__)
 
 # --- CONFIGURATION ---
 
-openai.api_key = "OPENAI_API_KEY"
+# Récupération de la clé API OpenAI depuis la variable d'environnement
+openai.api_key = os.getenv("OPENAI_API_KEY")
+if not openai.api_key:
+    raise ValueError("La variable d'environnement OPENAI_API_KEY n'est pas définie.")
 
-WORDPRESS_URL = "https://jebricol.com/wp-login.php?hide_my_wp=bricolage"
+# Infos WordPress
+WORDPRESS_URL = "https://jebricol.com/wp-json/wp/v2/posts"  # L'API REST WordPress (changer si besoin)
 USERNAME = "Bricoleur"
 APP_PASSWORD = "Mgbk JrPy JD1H PIIR gFai 2cD1"
+
+# ID de la catégorie (optionnel)
 CATEGORIE_ID = 5
 
+# --- FONCTION POUR GENERER L'ARTICLE AVEC OPENAI ---
+
 def generer_article():
-    prompt = (
-        "Rédige un article SEO d'au moins 3000 mots sur le bricolage, "
-        "avec un style clair et engageant."
-    )
-    response = openai.Completion.create(
-        engine="text-davinci-003",
-        prompt=prompt,
+    messages = [
+        {"role": "system", "content": "Tu es un assistant qui écrit des articles de bricolage."},
+        {"role": "user", "content": "Rédige un article SEO d'au moins 3000 mots sur le bricolage, avec un style clair et engageant."}
+    ]
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=messages,
         max_tokens=3000,
-        temperature=0.7
+        temperature=0.7,
     )
-    texte = response.choices[0].text.strip()
+    texte = response.choices[0].message.content.strip()
     return texte
+
+# --- FONCTION POUR PUBLIER L'ARTICLE SUR WORDPRESS ---
 
 def publier_article(titre, contenu, categorie_id=None):
     data = {
@@ -45,9 +56,7 @@ def publier_article(titre, contenu, categorie_id=None):
     else:
         return {"success": False, "error": response.text, "status_code": response.status_code}
 
-@app.route('/')
-def home():
-    return "Bienvenue sur mon générateur d'articles !"
+# --- ROUTE FLASK POUR LANCER LA GENERATION ET PUBLICATION ---
 
 @app.route('/generer-et-publier')
 def generer_et_publier():
@@ -64,7 +73,8 @@ def generer_et_publier():
     except Exception as e:
         return jsonify({"message": "Erreur serveur", "details": str(e)}), 500
 
-import os
+# --- Lancer le serveur Flask ---
+
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
