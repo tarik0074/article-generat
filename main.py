@@ -8,7 +8,7 @@ app = Flask(__name__)
 # --- CONFIGURATION ---
 
 # Clé API OpenAI 
-openai.api_key = "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"
+openai.api_key = "OPENAI_API_KEY"
 
 # Infos WordPress
 WORDPRESS_URL = "https://jebricol.com/wp-login.php?hide_my_wp=bricolage"
